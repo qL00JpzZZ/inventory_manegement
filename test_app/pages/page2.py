@@ -1,2 +1,6 @@
 import streamlit as st
-st.title('page2')
+from PIL import Image
+
+st.title('新規メニューとその材料を登録するページ')
+image = Image.open('./pic/sinkimenuImage.jpg')
+st.image(image,width = 200)

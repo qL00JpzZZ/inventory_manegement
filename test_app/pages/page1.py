@@ -1,2 +1,6 @@
 import streamlit as st
-st.title('page1')
+from PIL import Image
+
+st.title('材料の入荷を操作するページ')
+image = Image.open('./pic/nyuukaImage.jpg')
+st.image(image,width = 200)
