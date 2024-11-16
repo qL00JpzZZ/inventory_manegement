@@ -1,5 +1,6 @@
 import streamlit as st
 from PIL import Image
+import sqlite3
 
 st.title('データベースを表示するページ')
 st.caption('在庫、メニューの一覧が見れる、操作できる')
@@ -24,3 +25,10 @@ with st.form(key = 'menu_info'):
         add_btn2 = st.form_submit_button('登録')
         if add_btn2:
             st.caption('ok')
+
+
+# データを SQLite に保存
+conn = sqlite3.connect('メニュー')
+st.session_state["data"].to_sql('your_table_name', conn, if_exists='replace', index=False)
+conn.close()
+st.success("データがデータベースに保存されました！")
