@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\qL00J\OneDrive\zaiko\inventory_manegement\test\env"
+VIRTUAL_ENV="C:\zaiko\inventory_manegement\test_app\env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
