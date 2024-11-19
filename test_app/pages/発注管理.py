@@ -1,12 +1,9 @@
 import os
 import streamlit as st
-from PIL import Image
 import sqlite3
 import pandas as pd
 
 st.title('材料の入荷を操作するページ')
-image = Image.open('./pic/nyuukaImage.jpg')
-st.image(image, width=200)
 
 # データベースファイルのパスを指定
 db_directory = "C:/zaiko/inventory_manegement/test_app"  # 保存先のディレクトリを指定

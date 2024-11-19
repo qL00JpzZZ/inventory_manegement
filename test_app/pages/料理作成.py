@@ -1,12 +1,9 @@
 import streamlit as st
-from PIL import Image
 import sqlite3
 import pandas as pd
 
 st.title('作るメニューと個数を入力するページ')
 st.caption('消費する材料の個数を計算してデータベースを編集する')
-image = Image.open('./pic/sinkimenuImage.jpg')
-st.image(image, width=200)
 
 # データベースファイルのパスを指定
 db_path = "C:/zaiko/inventory_manegement/test_app/発注管理.db"  # 保存先のディレクトリを指定
