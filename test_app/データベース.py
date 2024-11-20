@@ -15,28 +15,187 @@ def fetch_data(query):
     conn.close()
     return data
 
-# 材料の入荷データを表示
-try:
-    hattyuu_data = fetch_data("SELECT * FROM hattyuu")
-    if not hattyuu_data.empty:
-        st.write("材料の入荷データ:")
-        st.dataframe(hattyuu_data)
-    else:
-        st.write("材料の入荷データはありません。")
-except Exception as e:
-    st.error(f"材料の入荷データ取得時にエラーが発生しました: {e}")
 
-# 新規発注データを表示
-try:
-    sinnkihattyuu_data = fetch_data("SELECT * FROM sinnkihattyuu")
-    if not sinnkihattyuu_data.empty:
-        st.write("新規発注データ:")
-        st.dataframe(sinnkihattyuu_data)
-    else:
-        st.write("新規発注データはありません。")
-except Exception as e:
-    st.error(f"新規発注データ取得時にエラーが発生しました: {e}")
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# データ表示処理
+try:
+    # テーブル作成（必要な場合）
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS inventory (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            品目 TEXT,
+            賞味期限 TEXT,
+            入荷日 TEXT,
+            個数 INTEGER
+        )
+    """)
+    conn.close()
+
+    # データ取得
+    inventory_data = fetch_data("SELECT * FROM inventory ORDER BY 品目, id")  # 品目ごとにソート
+
+    if not inventory_data.empty:
+        st.write("在庫データ:")
+
+        # 重複する品目を空白に置き換える
+        inventory_data["品目"] = inventory_data["品目"].mask(inventory_data["品目"].duplicated(), "")
+
+        # HTMLテーブル作成
+        html_content = ""
+        for _, row in inventory_data.iterrows():
+            html_content += (
+                f"<tr>"
+                f"<td>{row['品目']}</td>"
+                f"<td>{row['賞味期限']}</td>"
+                f"<td>{row['入荷日']}</td>"
+                f"<td>{row['個数']}</td>"
+                f"</tr>"
+            )
+
+        # HTMLテーブル全体
+        html_table = f"""
+        <table border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr>
+                    <th>品目</th>
+                    <th>賞味期限</th>
+                    <th>入荷日</th>
+                    <th>個数</th>
+                </tr>
+            </thead>
+            <tbody>
+                {html_content}
+            </tbody>
+        </table>
+        """
+        # HTMLを表示
+        st.markdown(html_table, unsafe_allow_html=True)
+    else:
+        st.write("在庫データはありません。")
+
+except Exception as e:
+    st.error(f"在庫データ取得時にエラーが発生しました: {e}")
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+# メニューデータを取得
+try:
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS menu (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            ingredient TEXT,
+            quantity INTEGER
+        )
+    """)
+    conn.close()
+
+    menu_data = fetch_data("SELECT * FROM menu")
+    if not menu_data.empty:
+        st.write("メニューデータ:")
+
+        # データを「結合して表示する」形式に加工
+        html_content = ""
+        grouped_data = menu_data.groupby("name")  # メニュー名でグループ化
+
+        for menu_name, group in grouped_data:
+            # グループごとのHTMLを生成
+            html_content += f"<tr><td rowspan='{len(group)}'>{menu_name}</td>"
+            for i, row in group.iterrows():
+                if i != group.index[0]:
+                    html_content += "<tr>"
+                html_content += f"<td>{row['ingredient']}</td><td>{row['quantity']}</td></tr>"
+
+        # HTMLテーブルの全体構造
+        html_table = f"""
+        <table border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr>
+                    <th>メニュー名</th>
+                    <th>材料名</th>
+                    <th>必要個数</th>
+                </tr>
+            </thead>
+            <tbody>
+                {html_content}
+            </tbody>
+        </table>
+        """
+        st.markdown(html_table, unsafe_allow_html=True)
+    else:
+        st.write("メニューデータはありません。")
+except Exception as e:
+    st.error(f"メニューデータ取得時にエラーが発生しました: {e}")
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 # 新しいメニューを登録
 st.caption('新しいメニューを追加')
 if "menu_info" not in st.session_state:
